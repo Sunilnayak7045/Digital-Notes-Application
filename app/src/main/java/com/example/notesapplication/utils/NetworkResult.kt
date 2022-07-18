@@ -1,4 +1,4 @@
-package com.cheezycode.notesample.utils
+package com.example.notesapplication.utils
 
 sealed class NetworkResult<T>(val data: T? = null, val message: String? = null) {
 
