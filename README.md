@@ -7,7 +7,7 @@ dependencies : implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 Add a header dynamically:
 For example Shared Preference Token
 
-Method 1:
+**Method 1:**
 -> add header in every request
 
 A request Header can be updated dynamically using the @Header annotation. A corresponding parameter must be provided to the @Header. 
@@ -20,7 +20,7 @@ If the value is null, the header will be omitted. Otherwise, toString will be ca
 Call<User> getUser(@Header("Authorization") String authorization)
 
 
-Method 2:
+**Method 2:**
 -> suppose we have 50 post/get request in which header is used,
 adding header in every request is tedious way, 
 alternatively we can use "OkHttp interceptor"
@@ -33,7 +33,7 @@ In simple words OkHttp interceptor is interceptor will add header in a request b
 UserApi doesnot need token in header
 NotesApi needs token in header
 
-Method 1: without interceptor
+**Method 1: without interceptor**
 
     @Singleton
     @Provides
@@ -44,7 +44,7 @@ Method 1: without interceptor
             .build()
     }
 
-Method 2: with interceptor
+**Method 2: with interceptor**
 
     @Singleton
     @Provides
