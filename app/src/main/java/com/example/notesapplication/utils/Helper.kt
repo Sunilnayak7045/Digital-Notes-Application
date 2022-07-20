@@ -1,4 +1,4 @@
-package com.cheezycode.notesample.utils
+package com.example.notesapplication.utils
 
 import android.content.Context
 import android.text.TextUtils

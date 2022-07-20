@@ -12,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.notesapplication.databinding.FragmentRegisterBinding
 import com.example.notesapplication.models.UserRequest
+import com.example.notesapplication.utils.Helper.Companion.hideKeyboard
 import com.example.notesapplication.utils.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,6 +50,13 @@ class RegisterFragment : Fragment() {
         //Initialize binding object in onCreateView
         _binding = FragmentRegisterBinding.inflate(inflater,container,false)
 
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         //access the field
         binding.btnLogin.setOnClickListener {
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
@@ -58,15 +66,25 @@ class RegisterFragment : Fragment() {
             //findNavController().navigate(R.id.action_registerFragment_to_mainFragment)
 
             //pass the dummy value Or call viewmodel by fragment
-            authViewModel.registerUser(UserRequest("abc109@gmail.com","123","abc"))
+            //authViewModel.registerUser(UserRequest("abc109@gmail.com","123","abc"))
 
 
+            hideKeyboard(it)
+            val validationResult = validateUserInput()
+            if (validationResult.first) {
+                val userRequest = getUserRequest()
+                authViewModel.registerUser(userRequest)
+            } else {
+                showValidationErrors(validationResult.second)
+            }
         }
-        return binding.root
+
+
+
+        bindObservers()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun bindObservers() {
         authViewModel.userResponseLiveData.observe(viewLifecycleOwner, Observer{
             binding.progressBar.isVisible= false
             when(it) {
@@ -87,6 +105,29 @@ class RegisterFragment : Fragment() {
             }
 
         })
+    }
+
+
+    private fun showValidationErrors(error: String) {
+        binding.txtError.text = String.format(resources.getString(R.string.txt_error_message, error))
+    }
+
+
+    private fun getUserRequest(): UserRequest {
+        return binding.run {
+            UserRequest(
+                txtEmail.text.toString(),
+                txtPassword.text.toString(),
+                txtUsername.text.toString()
+            )
+        }
+    }
+
+    private fun validateUserInput(): Pair<Boolean, String> {
+        val emailAddress = binding.txtEmail.text.toString()
+        val userName = binding.txtUsername.text.toString()
+        val password = binding.txtPassword.text.toString()
+        return authViewModel.validateCredentials(emailAddress, userName, password, false)
     }
 
     override fun onDestroyView() {
