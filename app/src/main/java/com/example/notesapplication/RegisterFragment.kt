@@ -14,7 +14,9 @@ import com.example.notesapplication.databinding.FragmentRegisterBinding
 import com.example.notesapplication.models.UserRequest
 import com.example.notesapplication.utils.Helper.Companion.hideKeyboard
 import com.example.notesapplication.utils.NetworkResult
+import com.example.notesapplication.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -22,6 +24,10 @@ class RegisterFragment : Fragment() {
     //Create a binding object
     private var _binding : FragmentRegisterBinding? = null
     private val binding get() = _binding !!
+
+
+    @Inject
+    lateinit var tokenManager: TokenManager
 
     //=====================================================
     //So to initialise viewmodel
@@ -49,6 +55,15 @@ class RegisterFragment : Fragment() {
     ): View? {
         //Initialize binding object in onCreateView
         _binding = FragmentRegisterBinding.inflate(inflater,container,false)
+
+
+        //when the view is created, check whether the token is null or not
+        //case 1: if null stay in FragmentRegisterBinding view
+        //case 2: if not null navigate to main fragment
+        // if we have splash screen use this validation check
+        if (tokenManager.getToken() != null) {
+            findNavController().navigate(R.id.action_registerFragment_to_mainFragment)
+        }
 
 
         return binding.root
@@ -91,6 +106,7 @@ class RegisterFragment : Fragment() {
 
                 is NetworkResult.Success -> {
 
+                    tokenManager.saveToken(it.data!!.token)
                     findNavController().navigate(R.id.action_registerFragment_to_mainFragment)
                 }
                 is NetworkResult.Error -> {

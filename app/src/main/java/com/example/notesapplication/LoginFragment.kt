@@ -17,7 +17,9 @@ import com.example.notesapplication.databinding.FragmentLoginBinding
 import com.example.notesapplication.models.UserRequest
 import com.example.notesapplication.utils.Helper
 import com.example.notesapplication.utils.NetworkResult
+import com.example.notesapplication.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -25,6 +27,9 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val authViewModel by viewModels<AuthViewModel> ()
+
+    @Inject
+    lateinit var tokenManager: TokenManager
 
 
     override fun onCreateView(
@@ -36,6 +41,15 @@ class LoginFragment : Fragment() {
 //        binding.btnLogin.setOnClickListener {
 //            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
 //        }
+
+
+        //when the view is created, check whether the token is null or not
+        //case 1: if null stay in FragmentRegisterBinding view
+        //case 2: if not null navigate to main fragment
+        // if we have splash screen use this validation check
+        if (tokenManager.getToken() != null) {
+            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+        }
         return binding.root
     }
 
@@ -87,6 +101,8 @@ class LoginFragment : Fragment() {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
+
+                    tokenManager.saveToken(it.data!!.token)
                     findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
                 }
                 is NetworkResult.Error -> {
