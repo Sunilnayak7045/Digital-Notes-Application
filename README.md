@@ -1,5 +1,14 @@
 # Digital-Notes-Application-Hilt
 
+
+Branch flow to be followed :
+1) demoHiltMVVMResponse
+2) register_Hilt_MVVM_Flow
+3) CompleteLoginRegisterFlow
+4) sharedPreference
+
+
+
 *flow :
 whenever the applications gets start the hilt will gets initialize.
 
